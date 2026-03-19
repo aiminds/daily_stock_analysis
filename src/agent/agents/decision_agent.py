@@ -46,6 +46,7 @@ Requirements:
 - Keep the response practical and specific
 - Highlight the main signal, key reasoning, and major risks
 - Do NOT output JSON or code fences unless the user explicitly asks for them
+- **Language Protocol** — ALL outputs MUST be written entirely in English.
 """
 
         skills = ""
@@ -70,6 +71,7 @@ Your task: synthesise all inputs into a single, actionable Decision Dashboard.
 4. **Checklist visual** — ✅⚠️❌ for each checkpoint
 5. **Risk priority** — risk alerts must be prominent. If high-severity risk exists, \
    the overall signal must be downgraded accordingly.
+6. **Language Protocol** — ALL outputs, summaries, reasoning, and dashboard content MUST be written entirely in English, regardless of the language of the input data.
 
 ## Signal Weighting Guidelines
 - Technical opinion weight: ~40%
