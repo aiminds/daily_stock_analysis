@@ -30,7 +30,7 @@ def _strip_exchange_prefix(text: str) -> Optional[str]:
 
 
 def is_code_like(value: str) -> bool:
-    """Check if string looks like a stock code (5-6 digits, 1-5 letters, or prefixed code)."""
+    """Check if string looks like a stock code."""
     text = value.strip().upper()
     if not text:
         return False
@@ -41,8 +41,11 @@ def is_code_like(value: str) -> bool:
             base = text[: -len(suffix)].strip()
             if base.isdigit() and len(base) in (5, 6):
                 return True
-    if re.match(r"^[A-Z]{1,5}(\.[A-Z])?$", text):
+                
+    # 🎯 NEW REGEX: Allows up to 6 base letters and multiple dot suffixes (e.g., U.UN.TO, LYSDY)
+    if re.match(r"^[A-Z]{1,6}(\.[A-Z]{1,4})*$", text):
         return True
+        
     # Support exchange-prefixed codes: SH600519, SZ000001, HK00700
     if _strip_exchange_prefix(text) is not None:
         return True
@@ -50,26 +53,23 @@ def is_code_like(value: str) -> bool:
 
 
 def normalize_code(raw: str) -> Optional[str]:
-    """Normalize and validate a single stock code.
-
-    Supports:
-    - Plain digit codes: 600519, 00700
-    - Suffix format: 600519.SH, 600519.SZ
-    - Prefix format: SH600519, SZ000001, HK00700 (case-insensitive)
-    - US ticker symbols: AAPL, TSLA
-    """
+    """Normalize and validate a single stock code."""
     text = raw.strip().upper()
     if not text:
         return None
     if text.isdigit() and len(text) in (5, 6):
         return text
-    if re.match(r"^[A-Z]{1,5}(\.[A-Z])?$", text):
+        
+    # 🎯 NEW REGEX
+    if re.match(r"^[A-Z]{1,6}(\.[A-Z]{1,4})*$", text):
         return text
+        
     for suffix in (".SH", ".SZ", ".SS"):
         if text.endswith(suffix):
             base = text[: -len(suffix)].strip()
             if base.isdigit() and len(base) in (5, 6):
                 return base
+                
     # Support exchange-prefixed codes: SH600519 -> 600519, HK00700 -> 00700
     stripped = _strip_exchange_prefix(text)
     if stripped is not None:
